@@ -1,1 +1,9 @@
+# JetBrains
 .idea
+
+# Python Venv
+bin
+include
+lib
+lib64
+share
