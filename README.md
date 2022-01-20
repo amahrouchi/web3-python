@@ -13,3 +13,7 @@ pip install py-solc-x
 ```
 pip install web3
 ```
+
+```
+pip install dotenv
+```
