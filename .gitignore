@@ -9,4 +9,5 @@ lib64
 share
 
 # App
+.env
 compiled_code.json
