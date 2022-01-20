@@ -61,5 +61,34 @@ transaction = SimpleStorage.constructor().buildTransaction(
 )
 
 # Signature et envoi
+print("Deploying contract...")
 signed_tx = w3.eth.account.sign_transaction(transaction, private_key=private_key)
 tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+print("Deployed!")
+
+# Exploité le contrat => on a besoin de son adresse et de son ABI
+simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+
+# Il y a  2 manières d'intéragir avec la blockchain
+# Call -> simule un call et recupere la valeur de retour (read sans changement d'état dans la blockchain)
+# Transact -> Effectue un changement d'état dans la blockchain
+
+# Valeur initiale du favNumber
+print("Initialized fav number:", simple_storage.functions.retrieve().call())
+print("Trying to store new fav number with a CALL:", simple_storage.functions.store(88).call())  # Ici on fait un call donc ça exécute la focntion mais ça ne change pas l'état de la blockchain
+print("Fav number has not changed =>", simple_storage.functions.retrieve().call())  # comme l'état n'a pas été changé, le favNumber stocké dans le contrat est toujours à 0
+
+# Mise à jour du favNumber de la bonne manière, avec une transaction
+print("Updating the fav number...")
+store_transaction = simple_storage.functions.store(89).buildTransaction({
+    "gasPrice": w3.eth.gas_price,
+    "chainId": chain_id,
+    "from": my_address,
+    "nonce": nonce + 1 # on incrémente le nonce ici car il doit être différent de celui de la transaction précédente qui à déployé le contrat
+})
+signed_store_tx = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
+store_tx_hash2 = w3.eth.send_raw_transaction(signed_store_tx.rawTransaction)
+store_tx_receipt = w3.eth.wait_for_transaction_receipt(store_tx_hash2)
+
+print("Fav number updated to:", simple_storage.functions.retrieve().call())
