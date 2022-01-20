@@ -7,3 +7,6 @@ include
 lib
 lib64
 share
+
+# App
+compiled_code.json

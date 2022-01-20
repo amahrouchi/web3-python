@@ -1,3 +1,4 @@
+import json
 from distutils.version import Version
 
 from solcx import compile_standard, install_solc
@@ -28,4 +29,9 @@ compiled_sol = compile_standard(
     solc_version="0.6.0"
 )
 
-print(compiled_sol)
+with open("compiled_code.json", "w") as file:
+    json.dump(compiled_sol, file)
+
+# Get the bytecode and the ABI
+bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"]["bytecode"]["object"]
+abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
