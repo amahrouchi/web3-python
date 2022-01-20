@@ -7,9 +7,12 @@ from solcx import compile_standard, install_solc
 with open("./SimpleStorage.sol", "r") as file:
     simple_storage_file = file.read()
 
+# Le tuto vidéo ne comprenait pas cette ligne je l'ai trouvée ici :
+# https://ethereum.stackexchange.com/questions/110405/having-a-problem-with-solc-x-version-solc-0-6-0-has-not-been-installed
+install_solc("0.6.0")
+
 # Compilation
 # TODO: regarder plus en détail la dec de solcx pour comprendre toute les possibilités
-install_solc("0.6.0") # Le tuto vidéo
 compiled_sol = compile_standard(
     {
         "language": "Solidity",
