@@ -38,3 +38,39 @@ Application giving us a blockchain URL to connect on a live network
     - Change your public address and your private key
 
 I personally used the **Rinkeby** test network and used **Metamask** to get my address and my private key.
+
+## Brownie
+
+_(4h27m40s in the video)_
+
+Looks like a Python Ethereum framework.
+
+- Install with `pipx` by following the process described here: https://github.com/eth-brownie/brownie.
+- Initialize a Brownie project in the folder of your choice by running:
+    - `brownie init`
+
+### Folders
+
+- `build`:
+    - contains our compile contracts
+    - keeps tracks of all our past deployments on all the different chains we are working with
+    - stores the interfaces that we will need
+- `contracts`:
+    - all the smart contracts developed for our project.
+    - when we ask Brownie to compile our contracts, it will automatically look in this folder and compile all our
+      contracts.
+- `interfaces`:
+    - our interfaces
+- `reports`:
+    - our reports to run
+- `scripts`:
+    - scripts written automating tasks like deploying, calling different functions...
+- `tests`:
+    - speaks for itself :)
+
+### Use brownie
+
+We can compile our smart contracts placed in the root contract folder with:
+```
+brownie compile
+```
