@@ -9,7 +9,7 @@ load_dotenv()
 
 # Ce bloc `with` sert à ouvrir le fichier SimpleStorage.sol et à le fermer automatiquement quand le travail est terminé
 # La fermeture se fait automatiquement à la fin du bloc `with`
-with open("./SimpleStorage.sol", "r") as file:
+with open("SimpleStorage.sol", "r") as file:
     simple_storage_file = file.read()
 
 # Le tuto vidéo ne comprenait pas cette ligne je l'ai trouvée ici :
