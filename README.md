@@ -17,3 +17,9 @@ pip install web3
 ```
 pip install dotenv
 ```
+
+## Ganache CLI
+
+```
+npm install --global ganache
+```
