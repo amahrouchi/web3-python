@@ -1,12 +1,19 @@
-from brownie import accounts, config, SimpleStorage
+from brownie import accounts, config, SimpleStorage, network
 
 # Lors de l'execution d'un script si on ne précise pas de network par défaut
 # Brownie va se connecter à Ganache CLI
 
+# Brownie est nativement compatible avec un certain nombre de réseau blockchain locaux, test ou live
+# `brownie networks list` va nous donner cette liste avec les identidiants à utiliser (en vert)
+# Pour lancer un script directement dans le network désiré on lancera donc :
+# `brownie run scripts/deploy.py --network rinkeby` pour lancer notre script sur Rinkeby
+# Brownie étant nativement compatible avec Infura, il suffit de rajouter une clef `WEB3_INFURA_PROJECT_ID`
+# dans notre `.env` pour utiliser le service Infura pour se connecter à Rinkeby
+
 def deploy_simple_storage():
     # Ganache : Brownie peut automatiquement exploiter les comptes disponibles dans Ganache
     # si aucun compte n'est précisé
-    account = accounts[0]
+    # account = accounts[0]
 
     # Compte personnalisé
     # Ce compte est créé via la commande `brownie accounts new <account_name>`
@@ -21,6 +28,7 @@ def deploy_simple_storage():
     # account = accounts.add(os.getenv("PRIVATE_KEY"))
     # account = accounts.add(config["wallets"]["from_key"]) # voir le fichier brownie-config.yaml pour comprendre
 
+    account = get_account()
     # print(account)
 
     # Déploiement du contrat
@@ -38,6 +46,15 @@ def deploy_simple_storage():
     # La quantité de code de ce fichier comparé à celle du deploy.py du dossier `native-web3-simple-storage`
     # est incomparable. Brownie nous épargne beaucoup de travail ce qui est plutôt cool !
 
+# Ici si on est en mode local, on se connecte à Ganache
+# si on est mode live, on utilise l'account stocké dans nos variables d'env
+# Le mode live est déclenché par la option `--network` utilisée lors du lancement du script :
+# `brownie run scripts/deploy.py --network rinkeby` par ex.
+def get_account():
+    if network.show_active() == "development":
+        return accounts[0]
+    else:
+        return accounts.add(config["wallets"]["from_key"])
 
 def main():
     deploy_simple_storage()
