@@ -67,3 +67,15 @@ Looks like a Python Ethereum framework.
     - scripts written automating tasks like deploying, calling different functions...
 - `tests`:
     - speaks for itself :)
+
+### Brownie console
+
+You can run an interactive Brownie Python console with:
+```commandline
+brownie console
+```
+
+You can here run any python code related to your brownie project. All your compiled contracts
+have already been imported as well as all usefull brownie import like `accounts`, `config`, `network`, ...
+
+It can be really useful to quickly test some code outside of a script. 
