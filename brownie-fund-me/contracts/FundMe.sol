@@ -9,9 +9,6 @@ import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 // Gestion des overflows (<0.8.0)
 import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
 
-/**
- * Objectif créer des fonctionnalité capable d'accpter des paiements
- */
 contract FundMe {
     // On applique les verifications d'overflow pour les uint256
     // Je pense qu'on ne le fait que pour un seul type car les calculs necessaires
@@ -19,74 +16,48 @@ contract FundMe {
     // les couts en Gas
     using SafeMathChainlink for uint256;
 
-    // Mapping servant à connaitre qui a payé combien via la fonction fund
+    // Mapping funders => montant donné
     mapping(address => uint256) public addressToAmountFounded;
 
-    // La liste des funders que l'on retrouve dans les clefs du mapping précédent
+    // La liste des funders
     address[] public funders;
 
-    // L'adresse ayant déployé le contrat
+    // L'adresse owner du contrat
     address public owner;
 
-    constructor() public {
-        // Dans le constructeur du contrat, on lui attribue un owner
-        // pour pouvoir vérifier qui est capable de retirer les fonds du contrat
-        // Le constructeur est appelé au moment ou le smart contract est déployé
+    // Contrat permettant la récupération des prix de l'ether (Chainlink)
+    AggregatorV3Interface public priceFeed;
+
+    constructor(address _priceFeed) public {
         owner = msg.sender;
+
+        // On instancie ici notre priceFeed Chainlink depuis le constructeur
+        // Ce sera un parametre passé à la fonction de déploiement de Brownie
+        priceFeed = AggregatorV3Interface(_priceFeed);
     }
 
     function fund() public payable {
-        // Mettre en place un minimum pour la transaction en cours
-        // On pouurait utiliser ça également pour comparer le prix de vente
-        // d'un objet à son équivalent en crypto (ici la crypto en question étant ETH)
-        // Ou servir de crowd funding crypto avec un minimum
         uint256 minimumUSD = 50 * 10 ** 18;
         require(getConversionRate(msg.value) > minimumUSD, "You need to spend more ETH!");
 
-        // msg est une variable toujours présente où
-        // - sender représente l'addresse qui a appelée cette fonction
-        // - value représente le nombre d'eth/gwei/wei envoyé
-
-        // Après l'appel de la fonction fund c'est désormais le smart contract qui est propriétaire
-        // des fonds envoyés par le sender de la transaction
-
         addressToAmountFounded[msg.sender] += msg.value;
-        funders.push(msg.sender); // on créé la liste des gens qui ont envoyé de la monnaie sur ce contrat
-
-        // Definition d'une valeur minimale pour la transaction
-        // Il est possible de définir cette limite en montant d'autres tokens ou monnaies
-        // Par ex si on veut definir en USD, il faut récupérer le ration ETH/USD
+        funders.push(msg.sender);
     }
 
     function getVersion() public view returns(uint256){
-        // 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e est l'adresse du contrat répondant à l'interface AggregatorV3Interface
-        // sur le testnet Rinkeby (sur un autre network l'adresse sera différente)
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
+        // Comme le priceFeed est instancié dans le constructeur, dans cette version du smart contract, on a pas besoin
+        // de spécifier l'adresse du contrat en dur, elle sera donnée en paramètre du déploiement via Brownie dans
+        // le script Python
+
         return priceFeed.version();
     }
 
     function getPrice() public view returns(uint256) {
-        // Ici encore on passe l'adresse du contrat sur le network Rinkeby
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
+        // Idem ici par rapport à la fonction précédente, on a plus besoin de récupérer le contrat avec son
+        // adresse en dur
 
-        // (
-        //     uint80 roundId,
-        //     int256 answer,
-        //     uint256 startedAt,
-        //     uint256 updatedAt,
-        //     uint80 answeredInRound
-        // ) = priceFeed.latestRoundData();
-
-        // Cet appel peut etre simplifié de cette manière
-        // Ce faisant le compilateur ne nous affiche plus de warnings
         (,int256 answer,,,) = priceFeed.latestRoundData();
-
-
         return uint256(answer * 10000000000);
-        // Le retour est arrondi avec 8 décimal, la somme est donc 3268.43628396 USD/ETH
-        // On multiplie par 10^10 pour avoir 18 décimal comme pour le wei, ça simplifiera les calcul plus tard (surement...)
-        // Le mec du tuto dit qu'il fait tout le temps comme ça, il doit avoir son expérience et ses raisons
-        // donc faisons pareil
     }
 
     function getConversionRate(uint256 ethAmount) public view returns(uint256) {
@@ -104,12 +75,9 @@ contract FundMe {
         );
         _;
         // Le _ sert de placeholder pour le code de la fonction qui exécutera le "modifier"
-        // S'il est à la fin, le code du modifier (un simple require ici) sera executé avant le code de la fonction qui l'appelle
-        // On pourrait également le placer au début pour que modifier s'exécute avant le code de la fonction qui l'appelle
     }
 
-    function withdraw() payable onlyOwner public { // Ici on appelle le modifier que l'on a declaré juste au dessus
-        // Permet à celui qui en fait la requête de recupérer le contenu en ETH du contrat
+    function withdraw() payable onlyOwner public {
         msg.sender.transfer(address(this).balance);
 
         // On reset le mapping des gens qui ont participé en remettant leur compteur à 0
