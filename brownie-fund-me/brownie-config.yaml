@@ -1,0 +1,14 @@
+# Dépendances de notre project que Brownie doit télécharger depuis Github
+dependencies:
+  - smartcontractkit/chainlink-brownie-contracts@1.1.1
+
+compiler:
+  solc:
+    # Ici on dit au compilateur que le "@chainlink" dans nos import correspond à la dépendances que l'on
+    # a déclarée au-dessus
+    remappings:
+      - "@chainlink=smartcontractkit/chainlink-brownie-contracts@1.1.1"
+
+dotenv: .env
+wallets:
+  from_key: ${PRIVATE_KEY}
