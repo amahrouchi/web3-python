@@ -1,5 +1,5 @@
 from brownie import network, config, FundMe, MockV3Aggregator
-from scripts.utils import get_account, deploy_mocks
+from scripts.utils import get_account, deploy_mocks, LOCAL_BLOCKCHAIN_ENV
 
 
 def deploy_fund_me():
@@ -13,7 +13,7 @@ def deploy_fund_me():
     # "Contracts" d'Etherscan (sans cela c'est un binaire illisible qui apparaît là) et aussi d'appeler les fonctions
     # publiques du contrat
 
-    if network.show_active() != "development":
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
         price_feed_address = config["networks"][network.show_active()]["eth-usd-price-feed-address"]
         # Il faudra en plus vérifier ici que la clef config["networks"][network.show_active()] existe bien dans la
         # config et raise un exception dans le cas contraire

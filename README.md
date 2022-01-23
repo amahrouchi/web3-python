@@ -78,4 +78,17 @@ brownie console
 You can here run any python code related to your brownie project. All your compiled contracts
 have already been imported as well as all usefull brownie import like `accounts`, `config`, `network`, ...
 
-It can be really useful to quickly test some code outside of a script. 
+It can be really useful to quickly test some code outside of a script.
+
+## Add Ganache UI to Brownie available networks
+
+The problem with the automatic Ganache CLI of Brownie is that Brownie will never remember
+deployments. To solve this we can add the Ganache UI to the list of available Brownie
+networks by using this command:
+
+```commandline
+brownie networks add Ethereum ganache-ui host=http://127.0.0.1:7545 chainid=1337
+```
+
+Now we can follow our deployments, transactions... in the Ganache UI and also work with 
+previously deployed contracts.
