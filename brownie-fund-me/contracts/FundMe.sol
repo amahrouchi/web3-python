@@ -17,7 +17,7 @@ contract FundMe {
     using SafeMathChainlink for uint256;
 
     // Mapping funders => montant donné
-    mapping(address => uint256) public addressToAmountFounded;
+    mapping(address => uint256) public addressToAmountFunded;
 
     // La liste des funders
     address[] public funders;
@@ -38,9 +38,9 @@ contract FundMe {
 
     function fund() public payable {
         uint256 minimumUSD = 50 * 10 ** 18;
-        require(getConversionRate(msg.value) > minimumUSD, "You need to spend more ETH!");
+        require(getConversionRate(msg.value) >= minimumUSD, "You need to spend more ETH! you sent ");
 
-        addressToAmountFounded[msg.sender] += msg.value;
+        addressToAmountFunded[msg.sender] += msg.value;
         funders.push(msg.sender);
     }
 
@@ -68,6 +68,13 @@ contract FundMe {
         return ethAmountInUsd;
     }
 
+    function getEntranceFee() public view returns(uint256) {
+        uint256 minimumUSD = 50 * 10**18;
+        uint256 price = getPrice();
+        uint256 precision = 10**18;
+        return (minimumUSD * precision) / price;
+    }
+
     modifier onlyOwner {
         require(
             msg.sender == owner,
@@ -83,7 +90,7 @@ contract FundMe {
         // On reset le mapping des gens qui ont participé en remettant leur compteur à 0
         for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
             address funder = funders[funderIndex];
-            addressToAmountFounded[funder] = 0;
+            addressToAmountFunded[funder] = 0;
         }
 
         // On reset également le tableau de funders
