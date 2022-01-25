@@ -15,6 +15,13 @@ networks:
   rinkeby:
     eth-usd-price-feed-address: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e"
     verify: True
+  # Ce fork n'est pas celui fourni par Brownie, on a créé un fork manuellement en utilisant le service Alchemy
+  # (concurrent de Infura je crois). La procédure se trouve dans la vidéo de tuto (cf README pour le lien)
+  # à environ 6h00m55s. Le type disait que les forks depuis infura était compliqué et bizarrement j;ai eu une erreur
+  # en essayant de l'utiliser alors qu'qvec Alchemy ça fonctionne
+  mainnet-fork-dev:
+    eth-usd-price-feed-address: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419" # Adresse de ce contrat sur le mainnet puisqu'on est dans un fork du main net
+    verify: False
   ganache-ui:
     verify: False
   developement:

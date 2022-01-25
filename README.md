@@ -71,7 +71,7 @@ Looks like a Python Ethereum framework.
 ### Brownie console
 
 You can run an interactive Brownie Python console with:
-```commandline
+```
 brownie console
 ```
 
@@ -86,9 +86,34 @@ The problem with the automatic Ganache CLI of Brownie is that Brownie will never
 deployments. To solve this we can add the Ganache UI to the list of available Brownie
 networks by using this command:
 
-```commandline
+```
 brownie networks add Ethereum ganache-ui host=http://127.0.0.1:7545 chainid=1337
 ```
 
 Now we can follow our deployments, transactions... in the Ganache UI and also work with 
 previously deployed contracts.
+
+## Fork the Ethereum main net from Alchemy
+
+Video tutorial at: `6:00:55`
+
+We will first need to create an Alchemy account and an Alchemy dev app on the Eth mainnet.
+In the following command line you will need to change the fork URL by the one corresponding
+to your Alchemy project (Project page > `View key` > Copy the HTTP URL)
+
+```
+ brownie networks add development mainnet-fork-dev cmd=ganache-cli host=http://127.0.0.1 fork='<ALCHEMY_URL>' accounts=10 mnemonic=brownie port=8545
+```
+
+# About tests
+
+Where to run it:
+- Brownie Ganache local environment with mocks **(ALWAYS)**
+- Testnet as integretion tests **(ALWAYS)**
+- Brownie main net fork **(OPTIONAL)**
+- Custom main net fork **(OPTIONAL)**
+
+I personally think that a test on a mainnet forked chain has to be done before any deployment 
+on a mainnet. Just to be sure that everything will work as expected in a
+mainnet environment
+

@@ -11,6 +11,9 @@ def test_can_fund_and_withdraw():
 
     # act/assert
     entrance_fee = fund_me.getEntranceFee()
+    # Petit souci ici quand je test sur le mainnet-fork-dev créé depuis Alchemy
+    # J'ai une exception qui apparait eth_abi.exceptions.NonEmptyPaddingBytes
+    # Peut-être un probleme de deploiement de notre contrat ou d'un de ces dépendances
     tx = fund_me.fund({"from": account, "value": entrance_fee})
     tx.wait(1)
     assert fund_me.addressToAmountFunded(account.address) == entrance_fee
