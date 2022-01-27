@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Lottery is Ownable, VRFConsumerBase {
 
     address payable[] public players;
-    address public recentWinner;
+    address payable public recentWinner;
     uint256 public randomness;
 
     uint256 public usdEntryFee;
@@ -89,13 +89,13 @@ contract Lottery is Ownable, VRFConsumerBase {
 
         // On verrouille les participations et le démarrage en changeant l'état
         lotteryState = LotteryState.CALCULATING_WINNER;
-        bytes32 = requestId = requestRandomness(keyhash, fee);
+        bytes32 requestId = requestRandomness(keyhash, fee);
 
         // Ici dans une 1ere transaction on fait une requete vers chainlink pour recevoir un numéro aléatoire
         // mais il va falloir attendre la réponse de Chainlink dans une autre transaction pour pouvoir l'exploiter
     }
 
-    function fullRandomness(bytes32 _requestId, uint256 _randomness) internal override {
+    function fulfillRandomness(bytes32 _requestId, uint256 _randomness) internal override {
         require(lotteryState == LotteryState.CALCULATING_WINNER, "You aren't there yet!");
         require(_randomness > 0, "Random number not found!");
 
