@@ -2,7 +2,11 @@
 
 ## Source
 
-https://www.youtube.com/watch?v=M576WGiDBdQ (3h26m30s approximately)
+**Video:** 
+- https://www.youtube.com/watch?v=M576WGiDBdQ (3h26m30s approximately)
+
+**Source:** 
+- https://github.com/smartcontractkit/full-blockchain-solidity-course-py
 
 ## Requirements
 
