@@ -1,7 +1,7 @@
 from brownie import Lottery, accounts, config, network, exceptions
 from web3 import Web3
 from scripts.deploy import deploy_lottery
-from scripts.utils import LOCAL_BLOCKCHAIN_ENV, STARTING_PRICE, get_account, fund_with_link
+from scripts.utils import LOCAL_BLOCKCHAIN_ENV, STARTING_PRICE, get_account, fund_with_link, get_contract
 import pytest
 
 
@@ -85,3 +85,40 @@ def test_can_end_lottery():
 
     # Assert
     assert lottery.lotteryState() == 2
+
+
+def test_can_pick_winner_correctly():
+    # Arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
+        pytest.skip()
+
+    # Act
+    lottery = deploy_lottery()
+    account = get_account()
+    lottery.startLottery({"from": account})
+    lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+    lottery.enter({"from": get_account(index=1), "value": lottery.getEntranceFee()})
+    lottery.enter({"from": get_account(index=2), "value": lottery.getEntranceFee()})
+    fund_with_link(lottery)
+
+    # Ici on récupère le requestId lié à l'évènement RequestedRandomness déclaré dans notre contrat de Lottery
+    # Ce requesdId va servir à appeler la fonction callBackWithRandomness de notre VRFCoordinator
+    # de manière à faire croire que le noeud chainlink à répondu avec un nombre random
+    end_tx = lottery.endLottery({"from": account})
+    request_id = end_tx.events["RequestedRandomness"]["requestId"]
+    STATIC_RNG = 777
+    get_contract("vrf-coordinator").callBackWithRandomness(
+        request_id,
+        STATIC_RNG,
+        lottery.address,
+        {"from": account}
+    )
+
+    start_balance = account.balance()
+    lottery_balance = lottery.balance()
+
+    # Assert
+    # 777 % 3 = 0, donc le gagnant est le 1er participant `account`
+    assert lottery.recentWinner() == account
+    assert lottery.balance() == 0
+    assert account.balance() == start_balance + lottery_balance

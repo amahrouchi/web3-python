@@ -27,6 +27,9 @@ contract Lottery is Ownable, VRFConsumerBase {
     uint256 public fee;
     bytes32 public keyhash;
 
+    // Ici on declare l'évènement permettant de tracer le fait qu'on a fait un appel pour demander un numéro aléatoire
+    event RequestedRandomness(bytes32 requestId);
+
     constructor(
         address _priceFeedAddress,
         address _vrfCoordinator,
@@ -89,10 +92,17 @@ contract Lottery is Ownable, VRFConsumerBase {
 
         // On verrouille les participations et le démarrage en changeant l'état
         lotteryState = LotteryState.CALCULATING_WINNER;
+        // requestRandomness: Vient de la classe parente VRFConsumerBase importé depuis chainlink
         bytes32 requestId = requestRandomness(keyhash, fee);
+
 
         // Ici dans une 1ere transaction on fait une requete vers chainlink pour recevoir un numéro aléatoire
         // mais il va falloir attendre la réponse de Chainlink dans une autre transaction pour pouvoir l'exploiter
+
+        // On emet ici l'évènement RequestedRandomness qui sera loggué dans la blockchain
+        // et qui nous servira dans notre cas en python dans le test de definition d'un gagnant
+        // le requestId va servir à faire croire au test que le noeud Chainlink à répondu avec un nombre aléatoire
+        emit RequestedRandomness(requestId);
     }
 
     function fulfillRandomness(bytes32 _requestId, uint256 _randomness) internal override {

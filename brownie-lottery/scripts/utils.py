@@ -18,7 +18,7 @@ contract_to_mock = {
 # Récupération du compte
 def get_account(index=None, id=None):
     if index:
-        return account[index]
+        return accounts[index]
 
     if id:
         return accounts.load(id)
