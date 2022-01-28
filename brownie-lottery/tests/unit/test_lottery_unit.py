@@ -1,7 +1,7 @@
-from brownie import Lottery, accounts, config, network
+from brownie import Lottery, accounts, config, network, exceptions
 from web3 import Web3
 from scripts.deploy import deploy_lottery
-from scripts.utils import LOCAL_BLOCKCHAIN_ENV, STARTING_PRICE
+from scripts.utils import LOCAL_BLOCKCHAIN_ENV, STARTING_PRICE, get_account, fund_with_link
 import pytest
 
 
@@ -39,3 +39,49 @@ def test_get_entrance_fee():
 
     # Assert
     assert expected_fee == entrance_fee
+
+
+def test_cant_enter_unless_started():
+    # Arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
+        pytest.skip()
+
+    # Act / Assert
+    lottery = deploy_lottery()
+    # with pytest.raises(exceptions.VirtualMachineError): # dans le tuto c'était cette ligne
+    with pytest.raises(AttributeError):
+        lottery.enter({"from": get_account(), "value": lottery.getEntranceFee()})
+
+
+def test_can_start_and_enter_lottery():
+    # Arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
+        pytest.skip()
+
+    # Act
+    lottery = deploy_lottery()
+    account = get_account()
+    lottery.startLottery({"from": account})
+    lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+
+    # Assert
+    assert lottery.players(0) == account
+    # Un array recupérer depuis un contrat doit être utilisé comme une fonction
+    # donc avec des () et pas de []
+
+
+def test_can_end_lottery():
+    # Arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
+        pytest.skip()
+
+    # Act
+    lottery = deploy_lottery()
+    account = get_account()
+    lottery.startLottery({"from": account})
+    lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+    fund_with_link(lottery)
+    lottery.endLottery({"from": account})
+
+    # Assert
+    assert lottery.lotteryState() == 2
