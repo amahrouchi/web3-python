@@ -51,7 +51,7 @@ def get_contract(contract_name):
     # et on connait sont ABI grace aux mocks que l'on a créé (l'ABI d'un mock et du vrai contrat est la même,
     # c'est le principe d'un mock en fait)
     else:
-        contract_address = config["network"][network.show_active()][contract_name]
+        contract_address = config["networks"][network.show_active()][contract_name]
         contract = Contract.from_abi(
             contract_type._name,
             contract_address,
