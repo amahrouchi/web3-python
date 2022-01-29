@@ -84,7 +84,7 @@ have already been imported as well as all usefull brownie import like `accounts`
 
 It can be really useful to quickly test some code outside of a script.
 
-## Add Ganache UI to Brownie available networks
+### Add Ganache UI to Brownie available networks
 
 The problem with the automatic Ganache CLI of Brownie is that Brownie will never remember
 deployments. To solve this we can add the Ganache UI to the list of available Brownie
@@ -97,7 +97,7 @@ brownie networks add Ethereum ganache-ui host=http://127.0.0.1:7545 chainid=1337
 Now we can follow our deployments, transactions... in the Ganache UI and also work with 
 previously deployed contracts.
 
-## Fork the Ethereum main net from Alchemy
+### Fork the Ethereum main net from Alchemy
 
 Video tutorial at: `6:00:55`
 
@@ -109,7 +109,7 @@ to your Alchemy project (Project page > `View key` > Copy the HTTP URL)
  brownie networks add development mainnet-fork-dev cmd=ganache-cli host=http://127.0.0.1 fork='<ALCHEMY_URL>' accounts=10 mnemonic=brownie port=8545
 ```
 
-# About tests
+### About tests
 
 Where to run it:
 - Brownie Ganache local environment with mocks **(ALWAYS)**
@@ -121,3 +121,17 @@ I personally think that a test on a mainnet forked chain has to be done before a
 on a mainnet. Just to be sure that everything will work as expected in a
 mainnet environment
 
+### Brownie mixes
+
+Brownie gives us some boilerplate code templates to start specific projects :
+https://github.com/brownie-mix. 
+
+We can init a project with a mix from the command line with:
+```
+brownie bake <repo_name>
+```
+
+Dans le repo `chainlink-mix`, there is already useful contract samples for randomness, pricefeed... and all the tests 
+to make sure everything works as expected .A config file is already prepared for us some networks and contract 
+addresses preconfigured (Avalanche, polygon,...). We can even run `brownie test [--network <whatever>]` to test 
+everything.
