@@ -53,6 +53,8 @@ def end_lottery():
     print(f"The lottery has ended! Waiting for the winner to be determinated...")
 
     # Ici on attend la réponse du noeud chainlink à notre demande de nombre aléatoire
+    # dans mon cas 60 n'a pas suffit, il faudrait plutot faire un boucle infinie (15 min max je pense)
+    # et attendre que le winner soit différent de 0
     time.sleep(60)
     print(f"Winner is {lottery.recentWinner()}") # Les attributs publics d'un contrat doivent être appelé avec des ()
 
