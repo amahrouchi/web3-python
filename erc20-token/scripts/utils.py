@@ -2,6 +2,8 @@ from brownie import accounts, network, config
 
 FORKED_LOCAL_ENV = ["mainnet-fork", "mainnet-fork-dev"]
 LOCAL_BLOCKCHAIN_ENV = ["development", "ganache-ui"]
+TOKEN_NAME = "Our Token"
+TOKEN_SYMBOL = "OTK"
 TOKEN_SUPPLY = 1000
 
 

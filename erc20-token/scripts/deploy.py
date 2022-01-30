@@ -2,8 +2,10 @@ from brownie import accounts, network, config, OurToken
 from scripts.utils import TOKEN_SUPPLY, get_account
 
 
-def deploy():
-    account = get_account()
+def deploy(account=None):
+    if account == None:
+        account = get_account()
+
     our_token = OurToken.deploy(
         TOKEN_SUPPLY,
         {"from": account},
