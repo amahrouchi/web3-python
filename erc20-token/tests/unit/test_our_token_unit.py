@@ -38,6 +38,31 @@ def test_transfer_successful():
     assert our_token.balanceOf(account) == TOKEN_SUPPLY - amountToTransfer
     assert our_token.balanceOf(account2) == amountToTransfer
 
+    our_token.transfer(account, amountToTransfer, {"from": account2})
+    assert our_token.balanceOf(account2) == 0
+    assert our_token.balanceOf(account) == TOKEN_SUPPLY
+
+
+def test_transfer_successful_not_from_owner():
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
+        pytest.skip()
+
+    # Given
+    account = get_account()
+    account2 = get_account(1)
+    amountToTransfer = 10
+    amountToTransfer2 = 5
+
+    # When
+    our_token = deploy()
+    our_token.transfer(account2, amountToTransfer)
+    our_token.transfer(account, amountToTransfer2, {"from": account2})
+
+    # Then
+    assert our_token.balanceOf(account) == TOKEN_SUPPLY - amountToTransfer + amountToTransfer2
+    assert our_token.balanceOf(account2) == amountToTransfer - amountToTransfer2
+
+
 def test_transfer_fails_insufficient_balance():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENV:
         pytest.skip()
