@@ -1,11 +1,11 @@
 from brownie import accounts, network, config
+from web3 import Web3
 
 FORKED_LOCAL_ENV = ["mainnet-fork", "mainnet-fork-dev"]
 LOCAL_BLOCKCHAIN_ENV = ["development", "ganache-ui"]
 TOKEN_NAME = "Our Token"
 TOKEN_SYMBOL = "OTK"
-TOKEN_DECIMALS = 18
-TOKEN_SUPPLY = 1000 * (10 ** TOKEN_DECIMALS)
+TOKEN_SUPPLY = Web3.toWei(1000, "ether")
 
 
 # Récupération du compte
