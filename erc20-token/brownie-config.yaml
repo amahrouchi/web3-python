@@ -8,8 +8,9 @@ compiler:
     remappings:
       - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.3.3'
 
-#networks:
-#  rinkeby:
+networks:
+  rinkeby:
+    verify: True
 
 wallets:
-  from_key: ${PRIvATE_KEY}
+  from_key: ${PRIVATE_KEY}
